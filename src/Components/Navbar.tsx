@@ -11,7 +11,7 @@ function Navbar() {
         </NavLink>
         <div className="nav-links">
           <NavLink 
-            to="/app" 
+            to="/app/monitor" 
             end
             className={({ isActive }) => `nav-link ${isActive||load ? 'active' : ''}`}
           >

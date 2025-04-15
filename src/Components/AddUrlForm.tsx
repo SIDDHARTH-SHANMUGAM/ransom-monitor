@@ -4,10 +4,16 @@ import axios from 'axios';
 interface AddUrlFormProps {
   attackerId: number;
   onCancel: () => void;
+  onSuccess?: () => void; // Add this line
   loading: boolean;
 }
 
-const AddUrlForm: React.FC<AddUrlFormProps> = ({ attackerId, onCancel, loading }) => {
+const AddUrlForm: React.FC<AddUrlFormProps> = ({ 
+  attackerId, 
+  onCancel, 
+  onSuccess,
+  loading 
+}) => {
   const [newUrl, setNewUrl] = useState('');
   const [error, setError] = useState('');
 
@@ -21,7 +27,7 @@ const AddUrlForm: React.FC<AddUrlFormProps> = ({ attackerId, onCancel, loading }
         url: newUrl 
       });
       onCancel();
-      window.location.reload();
+      if (onSuccess) onSuccess(); // Call onSuccess if provided
     } catch (err) {
       setError('Failed to add URL');
       console.error('Error adding URL:', err);

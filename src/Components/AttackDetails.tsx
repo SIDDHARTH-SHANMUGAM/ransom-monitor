@@ -42,7 +42,7 @@ interface Attack {
   }[];
   images: {
     imageId: number;
-    image: string;
+    imageUrl: string;
   }[];
 }
 
@@ -167,9 +167,9 @@ const AttackDetails = ({ attack, onBack }: AttackDetailsProps) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {attack.images.map(img => (
                 <div key={img.imageId} className="border rounded overflow-hidden">
-                  {img.image && (
+                  {img.imageUrl && (
                     <img 
-                      src={img.image} 
+                      src={img.imageUrl} 
                       alt={`Attack evidence ${img.imageId}`}
                       className="w-full h-auto object-cover"
                       onError={(e) => {
