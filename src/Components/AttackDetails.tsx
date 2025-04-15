@@ -14,7 +14,10 @@ interface Attack {
     attackerName: string;
     email: string;
     toxId: string;
+    sessionId: string;
     description: string;
+    iRaas: boolean;
+    monitorStatus: boolean;
   };
   victim: {
     victimName: string;

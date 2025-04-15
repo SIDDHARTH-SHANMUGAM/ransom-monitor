@@ -7,15 +7,33 @@ import React, { useState } from 'react';
   url: string;
  }
 
+ interface AttackerInfo {
+  attackerName: string;
+  email: string;
+  toxId: string;
+  sessionId: string;
+  description: string;
+  isRaas: boolean;
+  monitorStatus: boolean;
+ }
+
  interface AttackerForm {
-  name: string;
+  attacker: AttackerInfo;
   urls: URL[];
  }
 
  function AddAttacker() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<AttackerForm>({
-   name: '',
+   attacker: {
+    attackerName: '',
+    email: '',
+    toxId: '',
+    sessionId: '',
+    description: '',
+    isRaas: false,
+    monitorStatus: true, // Default to true
+   },
    urls: [{ url: '' }],
   });
   const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
@@ -42,13 +60,23 @@ import React, { useState } from 'react';
    }));
   };
 
+  const handleAttackerInfoChange = (field: keyof AttackerInfo, value: any) => {
+   setFormData(prev => ({
+    ...prev,
+    attacker: {
+     ...prev.attacker,
+     [field]: value,
+    },
+   }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
    e.preventDefault();
    setMessage(null);
    setLoading(true);
 
    const requestBody = {
-    attackerName: formData.name,
+    attacker: formData.attacker,
     urls: formData.urls.map(urlObj => urlObj.url),
    };
 
@@ -72,7 +100,7 @@ import React, { useState } from 'react';
   };
 
   return (
-   <div className="container mx-auto p-6 max-w-md">
+   <div className="container mx-auto p-6 max-w-lg">
     <button
      onClick={() => navigate('/app/monitor')}
      className="btn btn-link flex items-center mb-6"
@@ -97,18 +125,102 @@ import React, { useState } from 'react';
 
      <form onSubmit={handleSubmit}>
       <div className="mb-4">
-       <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
+       <label htmlFor="attackerName" className="block text-gray-700 text-sm font-bold mb-2">
         Attacker Name
        </label>
        <input
         type="text"
-        id="name"
-        value={formData.name}
-        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+        id="attackerName"
+        value={formData.attacker.attackerName}
+        onChange={(e) => handleAttackerInfoChange('attackerName', e.target.value)}
         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         required
         disabled={loading}
        />
+      </div>
+
+      <div className="mb-4">
+       <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+        Email
+       </label>
+       <input
+        type="email"
+        id="email"
+        value={formData.attacker.email}
+        onChange={(e) => handleAttackerInfoChange('email', e.target.value)}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        disabled={loading}
+       />
+      </div>
+
+      <div className="mb-4">
+       <label htmlFor="toxId" className="block text-gray-700 text-sm font-bold mb-2">
+        Tox ID
+       </label>
+       <input
+        type="text"
+        id="toxId"
+        value={formData.attacker.toxId}
+        onChange={(e) => handleAttackerInfoChange('toxId', e.target.value)}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        disabled={loading}
+       />
+      </div>
+
+      <div className="mb-4">
+       <label htmlFor="sessionId" className="block text-gray-700 text-sm font-bold mb-2">
+        Session ID
+       </label>
+       <input
+        type="text"
+        id="sessionId"
+        value={formData.attacker.sessionId}
+        onChange={(e) => handleAttackerInfoChange('sessionId', e.target.value)}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        disabled={loading}
+       />
+      </div>
+
+      <div className="mb-4">
+       <label htmlFor="description" className="block text-gray-700 text-sm font-bold mb-2">
+        Description
+       </label>
+       <textarea
+        id="description"
+        value={formData.attacker.description}
+        onChange={(e) => handleAttackerInfoChange('description', e.target.value)}
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        rows={3}
+        disabled={loading}
+       />
+      </div>
+
+      <div className="mb-4 flex items-center">
+       <input
+        type="checkbox"
+        id="isRaas"
+        checked={formData.attacker.isRaas}
+        onChange={(e) => handleAttackerInfoChange('isRaas', e.target.checked)}
+        className="form-checkbox h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        disabled={loading}
+       />
+       <label htmlFor="isRaas" className="ml-2 block text-gray-700 text-sm font-bold">
+        isRaas
+       </label>
+      </div>
+
+      <div className="mb-4 flex items-center">
+       <input
+        type="checkbox"
+        id="monitorStatus"
+        checked={formData.attacker.monitorStatus}
+        onChange={(e) => handleAttackerInfoChange('monitorStatus', e.target.checked)}
+        className="form-checkbox h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+        disabled={loading}
+       />
+       <label htmlFor="monitorStatus" className="ml-2 block text-gray-700 text-sm font-bold">
+        Monitor Status
+       </label>
       </div>
 
       <div className="mb-4">
