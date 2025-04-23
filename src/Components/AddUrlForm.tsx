@@ -1,42 +1,79 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 interface AddUrlFormProps {
   attackerId: number;
   onCancel: () => void;
-  onSuccess?: () => void; // Add this line
+  onSuccess: (message: string) => void;
+  onError: (message: string) => void;
   loading: boolean;
 }
 
-const AddUrlForm: React.FC<AddUrlFormProps> = ({ 
-  attackerId, 
-  onCancel, 
+interface AddUrlResponse {
+  message?: string;
+  error?: string;
+  // Add other expected properties from your API response
+}
+
+const AddUrlForm: React.FC<AddUrlFormProps> = ({
+  attackerId,
+  onCancel,
   onSuccess,
-  loading 
+  onError,
+  loading
 }) => {
   const [newUrl, setNewUrl] = useState('');
-  const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
+  const navigate = useNavigate(); // Initialize navigate
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newUrl.trim()) return;
+    if (!newUrl.trim()) {
+      setFormError('Please enter a URL.');
+      return;
+    }
 
     try {
-      await axios.post('http://localhost:3000/server/ransommonitor/addUrl', {
-        attackerId,
-        url: newUrl 
-      });
+      const token = sessionStorage.getItem('token');
+      const response: AxiosResponse<AddUrlResponse> = await axios.post(
+        'http://localhost:3000/server/ransommonitor/addUrl',
+        {
+          attackerId,
+          url: newUrl
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       onCancel();
-      if (onSuccess) onSuccess(); // Call onSuccess if provided
-    } catch (err) {
-      setError('Failed to add URL');
+      if (response.status === 200) {
+        onSuccess(response.data?.message || 'URL added successfully.');
+      } else if (response.status === 206) {
+        onError(response.data?.message || 'URL Already Exists.');
+      } else {
+        onError(response.data?.message || `Failed to add URL (Status: ${response.status})`);
+      }
+    } catch (err: any) {
       console.error('Error adding URL:', err);
+      if (err.response && err.response.status === 401) {
+        onError('You are not authorized to perform this action. Please log in again.');
+        // sessionStorage.removeItem('token');
+        setTimeout(() => {
+          navigate('/app');
+        }, 1500);
+      } else {
+        setFormError('Failed to add URL.');
+        onError(err.response?.data?.error || `Failed to add URL (Error: ${err.message})`);
+      }
     }
   };
 
   return (
     <tr>
-      <td colSpan={6} className="bg-gray-100">
+      <td colSpan={7} className="bg-gray-100 w-700">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <input
             type="text"
@@ -62,7 +99,7 @@ const AddUrlForm: React.FC<AddUrlFormProps> = ({
             Cancel
           </button>
         </form>
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        {formError && <p className="text-red-500 text-sm mt-1">{formError}</p>}
       </td>
     </tr>
   );
