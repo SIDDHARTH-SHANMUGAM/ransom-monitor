@@ -12,7 +12,7 @@ import {
   Eye,
   Activity,
 } from 'lucide-react';
-import DeleteUrlModal from './DeleteUrlModel';
+import DeleteUrlModal from './DeleteUrlModal';
 import DeleteAttackerModal from './DeleteAttackerModal';
 import MonitoringChangeModal from './MonitoringChangeModal';
 import AddUrlForm from './AddUrlForm';
@@ -316,7 +316,7 @@ function Monitor() {
   };
 
   const navigateToAgentStatus = () => {
-    navigate('/app/agent-Status');
+    navigate('/app/agents');
   };
   const navigateToOnlineAttackers = () => {
     navigate('/app/view-Online-Attacker');
@@ -373,7 +373,7 @@ function Monitor() {
             onClick={navigateToAgentStatus}
             disabled={loading}
           >
-            Agent Status
+            Agent
           </button>
           <button
             className="btn btn-secondary btn-sm"

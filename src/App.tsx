@@ -10,8 +10,9 @@ import LoginPage from './Components/LoginPage';
 import AddAdminPage from './Components/AddAdminPage';
 import AuthCheck from './Components/AuthCheck';
 import NotFound from './Components/NotFound';
-import AgentStatus from './Components/AgentStatus';
 import OnlineAttackers from './Components/OnlineAttackers';
+import AllAgent from './Components/AllAgent';
+import ViewAgent from './Components/ViewAgent';
 
 function App() {
   return (
@@ -31,7 +32,8 @@ function App() {
                   <Route path="add-Admin" element={<AddAdminPage />} />
                   <Route path="view-Attacker" element={<ViewAttacker />} />
                   <Route path="view-Online-Attacker" element={<OnlineAttackers />} />
-                  <Route path="agent-Status" element={<AgentStatus />} />
+                  <Route path="/view-agent/:agentId" element={<ViewAgent />} />
+                  <Route path="agents" element={<AllAgent />} />
                   <Route path="*" element={<NotFound/>} />
                 </Routes>
               </>
